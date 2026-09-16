@@ -1,0 +1,40 @@
+version: 1
+
+project:
+  root: .
+  build_config: lzc-build.yml
+  package_file: package.yml
+  output: .lazycat-build/dockercopilot.lpk
+  target_arch: amd64
+
+update:
+  strategy: publish
+  allow_downgrade: false
+  version_source:
+    type: image
+    image: dockercopilot
+
+build:
+  run_buildscript: false
+
+images:
+  # 主应用：上游有完整三段 SemVer tag（2.1.1），排除 latest/UGREEN/ZSPACE 等别名
+  - id: dockercopilot
+    target: service
+    service: dockercopilot
+    source: 0nlylty/dockercopilot
+    channel: stable
+    sort: semver
+    tag_regex: '^v?\d+\.\d+\.\d+$'
+    delivery:
+      mode: mirror
+
+stores:
+  official:
+    # Official store publication is intentionally disabled; publish only to Miaomiao Store.
+    enabled: false
+  private:
+    enabled: true
+    skip_if_version_exists: true
+    name: dockerCopilot
+    summary: "一个主打便捷的docker容器管理工具"

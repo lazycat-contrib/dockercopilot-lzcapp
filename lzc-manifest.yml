@@ -1,0 +1,21 @@
+application:
+  subdomain: docker-copilot
+  background_task: true
+  multi_instance: false
+  public_path:
+    - /
+
+  upstreams:
+    - location: /
+      backend: http://dockercopilot:12712/
+
+services:
+  dockercopilot:
+    # upstream: 0nlylty/dockercopilot:2.1.1
+    image: docker.1ms.run/0nlylty/dockercopilot:2.1.1
+    environment:
+      - TZ=Asia/Shanghai
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - secretKey={{ stable_secret "secret_key" }}
+    binds:
+      - /lzcapp/var/data:/data
